@@ -1,0 +1,198 @@
+<html>
+ 
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+  <title>渐变-边框-圆角【clip-path】</title>
+</head>
+<style>
+  html,
+  body {
+    padding: 0;
+    margin: 0;
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(0deg, rgba(39, 148, 251, 0.7) 0%, rgba(39, 148, 251, 0.2) 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+ 
+  #view {
+    position: relative;
+  }
+ 
+  #clip-path {
+    position: relative;
+    width: 400px;
+    height: 200px;
+    background: linear-gradient(48deg, #00FCFF 0%, #FFDE00 100%);
+  }
+ 
+  .row {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 10px;
+  }
+ 
+  .label {
+    display: block;
+    width: 100px;
+  }
+ 
+  .value {
+    width: 400px;
+  }
+</style>
+ 
+<body>
+  <div id="view">
+    <div class="row">
+      <span class="label">宽度(px)：</span>
+      <input type="number" class="value" placeholder="请输入数字" value="400" onchange="handleChange(this,'width')" />
+    </div>
+    <div class="row">
+      <span class="label">高度(px)：</span>
+      <input type="number" class="value" placeholder="请输入数字" value="200" onchange="handleChange(this,'height')" />
+    </div>
+    <div class="row">
+      <span class="label">背景：</span>
+      <input class="value" placeholder="请输入背景色" value="linear-gradient(48deg, #00FCFF 0%, #FFDE00 100%)"
+        onchange="handleChange(this,'background')" />
+    </div>
+    <div class="row">
+      <span class="label">圆角(px)：</span>
+      <input type="number" class="value" placeholder="请输入数字" value="15" onchange="handleChange(this,'borderRadius')" />
+    </div>
+    <div class="row">
+      <span class="label">内角光滑度：</span>
+      <input type="number" class="value" placeholder="请输入1~90,数字越大光滑，基本10就够用了" value="10"
+        onchange="handleChange(this,'n')" />
+    </div>
+    <div class="row">
+      <span class="label">框宽(px)：</span>
+      <input type="number" class="value" placeholder="请输入数字，相当于borderWidth" value="5"
+        onchange="handleChange(this,'borderWidth')" />
+    </div>
+    <div class="row">
+      <button onclick="start()">运行</button>
+    </div>
+    <div id="clip-path"></div>
+  </div>
+</body>
+ 
+<script>
+  const config = {
+    borderRadius: 15,
+    borderWidth: 5,
+    width: 400,
+    height: 200,
+    background: 'linear-gradient(48deg, #00FCFF 0%, #FFDE00 100%)',
+    n: 10
+  };
+  const quadrantFunc = {
+    1: {
+      getX: (radian, lr, sr) => {
+        const swap = sr * Math.cos(Math.PI / 2 - radian) - lr;
+        const x = `calc(100% + ${swap}px)`;
+        return x;
+      },
+      getY: (radian, lr, sr) => {
+        const y = lr - sr * Math.sin(Math.PI / 2 - radian);
+        return `${y}px`;
+      }
+    },
+    2: {
+      getX: (radian, lr, sr) => {
+        const x = lr - sr * Math.cos(radian);
+        return `${x}px`;
+      },
+      getY: (radian, lr, sr) => {
+        const y = lr - sr * Math.sin(radian);
+        return `${y}px`;
+      }
+    },
+    3: {
+      getX: (radian, lr, sr) => {
+        const x = lr - sr * Math.cos(Math.PI / 2 - radian);
+        return `${x}px`;
+      },
+      getY: (radian, lr, sr) => {
+        const swap = sr * Math.sin(Math.PI / 2 - radian) - lr;
+        const y = `calc(100% + ${swap}px)`;
+        return y;
+      }
+    },
+    4: {
+      getX: (radian, lr, sr) => {
+        const swap = sr * Math.cos(radian) - lr;
+        const x = `calc(100% + ${swap}px)`;
+        return x;
+      },
+      getY: (radian, lr, sr) => {
+        const swap = sr * Math.sin(radian) - lr;
+        const y = `calc(100% + ${swap}px)`;
+        return y;
+      }
+    },
+  };
+ 
+  function start() {
+    console.time('start');
+    const node = document.getElementById('clip-path');
+    const cssClipPath = getClipPath();
+    node.style.cssText = cssClipPath;
+    node.style.borderRadius = config.borderRadius + 'px';
+    node.style.width = config.width + 'px';
+    node.style.height = config.height + 'px';
+    node.style.background = config.background;
+    console.timeEnd('start');
+  }
+ 
+  function handleChange(e, type) {
+    const value = type === 'background' ? e.value : Number(e.value);
+    config[type] = value;
+  }
+ 
+  function getClipPath() {
+    const innerRadius = config.borderRadius - config.borderWidth;
+    const step = Math.PI / 2 / config.n;
+    const quadrant1 = getQuadrant(1, config.borderRadius, innerRadius, config.n, step);
+    const quadrant2 = getQuadrant(2, config.borderRadius, innerRadius, config.n, step);
+    const quadrant3 = getQuadrant(3, config.borderRadius, innerRadius, config.n, step);
+    const quadrant4 = getQuadrant(4, config.borderRadius, innerRadius, config.n, step);
+    const res =
+      `clip-path: polygon(
+      0 50%,
+      0 100%, 
+      100% 100%,
+      100% 0, 
+      0 0, 
+      0 50%, 
+      ${config.borderWidth}px 50%,
+      ${quadrant2},
+      ${quadrant1},
+      ${quadrant4},
+      ${quadrant3},
+      ${config.borderWidth}px 50%,
+      0 50%
+    );`;
+    return res;
+  }
+ 
+  function getQuadrant(type, outsideR, innerR, length, interval) {
+    const getXY = quadrantFunc[type];
+    const res = [];
+    for (let i = 0; i <= length; i++) {
+      const radian = i * interval;
+      const x = getXY.getX(radian, outsideR, innerR);
+      const y = getXY.getY(radian, outsideR, innerR);
+      res.push(`${x} ${y}`);
+    }
+    const str = res.join(',');
+    return str;
+  }
+</script>
+ 
+</html>

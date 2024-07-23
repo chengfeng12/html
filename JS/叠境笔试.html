@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+    </style>
+</head>
+
+<body>
+    <div>
+
+    </div>
+    <script>
+        function Test(params) {
+
+            function myFunc() { console.log('a'); };
+            console.log(this);
+            // return this;
+        }
+
+        // Test.myFunc = function () { console.log('b'); };
+        // Test.prototype.myFunc = function () { console.log('c'); };
+        // var myFunc = function () { console.log('d'); };
+        // function myFunc() { console.log('e'); }
+
+
+        // Test.myFunc();
+        // myFunc();
+        // Test().myFunc();
+        // myFunc();
+        // new Test.myFunc();
+        console.log(Test.myFunc);;
+        console.log(new Test().myFunc, 'new Test()');
+        // new Test().myFunc();
+        // new new Test().myFunc();
+        // console.log(myFunc);
+        'b d a a b c c '
+    </script>
+</body>
+
+</html>

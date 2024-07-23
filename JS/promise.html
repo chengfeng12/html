@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>promise</title>
+</head>
+
+<body>
+  <script>
+    function MyPromise(callback) {
+      this.state = 'pendding'
+      this.success = null;
+      this.error = null;
+
+      this.onFulfilled = null;
+      this.onRejected = null;
+
+      let that = this;
+      let result = [];
+      function resolve(success) {
+        if (that.state === 'pendding') {
+          that.state = 'fulfilled';
+          that.success = success;
+        }
+        if (that.onFulfilled) {
+          that.onFulfilled(success);
+        }
+      }
+      function reject(error) {
+        if (that.state === 'pendding') {
+          that.state = 'rejected';
+          that.error = error;
+        }
+        if (that.onRejected) {
+          that.onRejected(error);
+        }
+      }
+      callback(resolve, reject)
+    }
+
+    MyPromise.prototype.then = function (handleFulfilled, handleRejected) {
+      return new MyPromise((resolve, reject) => {
+        if (this.state === 'fulfilled' && handleFulfilled) {
+          resolve(handleFulfilled(this.success));
+        }
+        if (this.state === 'rejected' && handleRejected) {
+          reject(handleRejected(this.error));
+        }
+        if (this.state === 'pendding') {
+          if (handleFulfilled) {
+            this.onFulfilled = handleFulfilled;
+          }
+          if (handleRejected) {
+            this.onRejected = handleRejected;
+          }
+        }
+      })
+    }
+
+    MyPromise.prototype.catch = function (handleRejected) {
+      if (typeof handleRejected === 'function') {
+        this.then(() => { }, handleRejected);
+      }
+    }
+
+
+    function all(args) {
+      return new Promise((resolve, reject) => {
+        if (!(args instanceof Array)) {
+          return reject('参数错误');
+        }
+        let count = 0;
+        let result = [];
+        args.forEach(promise => {
+          Promise.resolve(promise).then(res => {
+            result.push(res);
+            count++;
+            if (args.length === count) {
+              resolve(result);
+            }
+          }, err => {
+            reject(err);
+          })
+        })
+      })
+    }
+
+    function rece(args) {
+      return new Promise((resolve, reject) => {
+        if (!(args instanceof Array)) {
+          return reject('参数错误');
+        }
+        args.forEach(promise => {
+          Promise.resolve(promise).then(res => {
+            resolve(res);
+          }, err => {
+            reject(err);
+          })
+        })
+      })
+    }
+
+    function any(args) {
+      return new Promise((resolve, reject) => {
+        if (!(args instanceof Array)) {
+          return reject('参数错误');
+        }
+        let count = 0;
+        let errorList = [];
+        args.forEach(promise => {
+          Promise.resolve(promise).then(res => {
+            resolve(res);
+          }, err => {
+            count++;
+            errorList.push(err)
+            if (count === args.length && count === errorList.length) {
+              reject(new Error('都错了'));
+            }
+            if (count === args.length) {
+              reject(errorList[0]);
+            }
+          })
+        })
+      })
+    }
+
+    new MyPromise((resolve, reject) => {
+      // resolve('resolve');
+      setTimeout(() => {
+        reject('reject');
+      }, 0);
+    }).then(res => {
+      console.log(res);
+    }, err => {
+      console.log(err);
+    }).catch(err => {
+      console.log(err, 'catch');
+    })
+
+    const promise1 = new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve('foo1')
+      }, 3000);
+    });
+    const promise2 = new Promise((resolve, reject) => {
+      reject('foo2')
+    });
+    const promise3 = new Promise((resolve, reject) => {
+      setTimeout(() => {
+        reject('foo')
+      }, 1000);
+    });
+    const promise4 = new Promise((resolve, reject) => {
+      setTimeout(() => {
+        reject('foo1')
+      }, 100);
+    });
+    let proList = [promise1, promise2, promise3, promise4]
+
+    Promise.all(proList).then(res => {
+      console.log(res, 'prores');
+    }).catch(err => {
+      console.log(err, '-----err');
+    })
+
+
+    // any(proList).then(res => {
+    //   console.log(res, 'prores');
+    // }).catch(err => {
+    //   console.log(err, '-----err');
+    // })
+  </script>
+</body>
+
+</html>

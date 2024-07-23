@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .view-content {
+      display: flex;
+      flex-wrap: wrap;
+      padding: 20px;
+    }
+
+    .image {
+      height: 200px;
+      width: 200px;
+      margin-right: 20px;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="view-content">
+
+  </div>
+</body>
+<script>
+  let viewContent = document.querySelector('.view-content');
+  const dom = new Proxy({}, {
+    get(target, key) {
+      return function (object, ...children) {
+        let el = document.createElement(key);
+        for (const key of Object.keys(object)) {
+          el.setAttribute(key, object[key]);
+        }
+        children.forEach(child => {
+          if (typeof child === 'string') {
+            child = document.createTextNode(child);
+          }
+          el.appendChild(child);
+        })
+        return el;
+      }
+    }
+  })
+
+  function create(el, number = 10) {
+    let frgDom = document.createDocumentFragment();
+    for (let i = 0; i < number; i++) {
+      let img = dom.img({
+        src: 'https://img0.baidu.com/it/u=256816879,771155532&fm=253&app=120&size=w931&n=0&f=JPEG&fmt=auto?sec=1710003600&t=7108509455bd540052f3ad023e491317',
+        class: 'image'
+      });
+      frgDom.appendChild(img);
+    }
+    el.appendChild(frgDom);
+  }
+  create(viewContent, 1000);
+  const intersectionObserver = new IntersectionObserver((entries) => {
+    entries.forEach(cur => {
+      // 进入窗口
+      // intersectionRatio 元素出现在屏幕中的占比， 小于 0 没有展示
+      if (cur.intersectionRatio > 0 && cur.target.src) {
+        setTimeout(() => {
+          cur.target.src = 'https://img1.baidu.com/it/u=3758961705,4009040989&fm=253&fmt=auto&app=120&f=JPEG?w=1422&h=800';
+          intersectionObserver.unobserve(cur.target)
+        }, 500);
+      }
+    });
+  });
+  let imgList = document.querySelectorAll('.image')
+  imgList.forEach(image => {
+    intersectionObserver.observe(image);
+  })
+
+</script>
+
+</html>

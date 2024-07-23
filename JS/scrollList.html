@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .view-content {
+      background: green;
+      position: relative;
+      overflow-y: auto;
+    }
+
+    .list {
+      position: absolute;
+      left: 0;
+      top: 0;
+    }
+    .list-row {
+      height: var(--rowHeight);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="view-content">
+    <div class="scrollbar"></div>
+    <div class="list"></div>
+  </div>
+</body>
+<script>
+  let viewContent = document.querySelector('.view-content');
+  let scrollbar = document.querySelector('.scrollbar');
+  let listDom = document.querySelector('.list');
+  let dataList = new Array(200).fill(null).map((item, i) => i + 1);
+
+  class Scroll {
+    constructor(options) {
+      const { contentNnm, rowHeight, dataList, el } = options;
+      this.el = this.getEl(el);
+      this.contentNnm = contentNnm;
+      this.rowHeight = rowHeight;
+      this.viewHeight = this.contentNnm * this.rowHeight;
+      this.listHeight = this.viewHeight;
+      this.scrollbarHeight = this.rowHeight * dataList.length;
+      this.dataList = dataList;
+      this.start = 0;
+      this.end = this.contentNnm;
+      this.showList = [];
+      this.offSet = 0;
+      this.init();
+    }
+    getEl(el) {
+      if (el && typeof el === String) {
+        el = document.querySelector(el);
+      } else if (el instanceof HTMLElement) {
+        return el;
+      } else {
+        el = document.body;
+      }
+      return el;
+    }
+    init() {
+      this.showList = this.getNewList();
+      scrollbar.style = `height: ${this.scrollbarHeight}px;`;
+      viewContent.style = `height: ${this.viewHeight}px;--rowHeight: ${this.rowHeight}px;`;
+      listDom.style = `height: ${this.listHeight}px;`;
+      this.createEle();
+    }
+    getNewList() {
+      return dataList.slice(this.start, this.end);
+    }
+    createEle() {
+      let fDom = document.createDocumentFragment();
+      console.log(fDom, 'fDom');
+      if (this.showList) { }
+      this.showList.forEach(item => {
+        let divDom = document.createElement('div');
+        // divDom.style = `height: ${this.rowHeight}px;`;
+        divDom.className = divDom.className + ' v-scroll-row list-row'
+        // divDom.classList.add('v-scroll-row list-row')
+        divDom.innerHTML = item;
+        fDom.appendChild(divDom);
+      });
+      this.el.appendChild(fDom);
+    }
+    updateView(offSet) {
+      this.offSet = offSet;
+      let offSetNum = Math.round(offSet / this.rowHeight);
+      this.start = offSetNum;
+      this.end = this.start + 20;
+      this.renderContent()
+    }
+    renderContent() {
+      const rowList = document.querySelectorAll('.v-scroll-row');
+      const list = this.getNewList();
+      rowList.forEach((elm, index) => {
+        if (list[index]) {
+          elm.innerHTML = list[index];
+        } else elm.innerHTML = '';
+      })
+      listDom.style = `transform: translateY(${this.offSet}px)`;
+    }
+  }
+
+  const scrollCLass = new Scroll({
+    dataList,
+    contentNnm: 10,
+    rowHeight: 30,
+    el: listDom
+  })
+  viewContent.addEventListener('scroll', (e) => {
+    let offSet = e.target.scrollTop;
+    scrollCLass.updateView(offSet)
+  })
+  // viewContent.onScroll = (e) => {
+  //   debugger
+  // }
+  console.log(dataList);
+</script>
+
+</html>

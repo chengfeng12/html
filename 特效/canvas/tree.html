@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>tree</title>
+  <style>
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: rgb(111, 202, 172);
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="tree"></canvas>
+  <script>
+    const random = Math.random
+    const canvas = document.querySelector('#tree');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth * devicePixelRatio;
+    canvas.height = window.innerHeight * devicePixelRatio;
+    console.log(canvas.height, devicePixelRatio, 'height');
+    ctx.translate(canvas.width / 2, canvas.height)
+    ctx.scale(1, -1)
+    console.log(ctx, 'ctx');
+    console.log(canvas, 'canvas');
+    drawBranch([0, 0], 10, 200, 156)
+    function drawBranch(v0, thick, length, dir) {
+      if (thick < 2 && random() < 0.3) {
+        drawArc(v0);
+        return
+      }
+      if (thick < 2) {
+        drawArc(v0);
+        drawArc([
+          v0[0] + 5,
+          v0[1] + 5,
+        ], 5, 2)
+        return
+      }
+      if (length < 30) {
+        drawArc(v0);
+        drawArc([
+          v0[0] + 5,
+          v0[1] + 5,
+        ], 5, 2)
+        return
+      }
+      let [start, end] = v0;
+      const v1 = [
+        start + length * Math.cos((dir + Math.PI) / 100),
+        end + length * Math.sin((dir + Math.PI) / 100),
+      ]
+      if (v1[1] >= canvas.height - 100) {
+        // drawArc(v0);
+        return
+      }
+
+      ctx.beginPath();
+      ctx.moveTo(start, end);
+
+
+      console.log(v1, 'v1');
+      ctx.lineTo(...v1);
+      // ctx.strokeStyle= 'rgb(0,' + (((rand() * 64) +64) >>0) + ',50,25)';
+      // if (thick < 3) {
+      //   ctx.strokeStyle = '#36724b';
+      // } else ctx.strokeStyle = '#333';
+      ctx.strokeStyle = '#333';
+      ctx.lineCap = 'round';
+      ctx.lineWidth = thick;
+      ctx.stroke();
+      // let number = random()
+      // if (number > 0.5) {
+      //   drawBranch(v1, thick * 0.9, length - random() * length / 2, dir + random() * 30)
+      // }
+      drawBranch(v1, thick * 0.85, length - random() * length / 2, dir + random() * 50)
+      drawBranch(v1, thick * 0.85, length - random() * length / 2, dir - random() * 50)
+    }
+    function drawArc(v0, start = 0, radius = 10) {
+      ctx.beginPath();
+      ctx.arc(...v0, radius, start, 2 * Math.PI)
+      // let number = random()
+      if (radius === 2) {
+        ctx.fillStyle = '#ffb6c1';
+      } else {
+        ctx.fillStyle = '#fff';
+      }
+      ctx.fill();
+    }
+  </script>
+</body>
+
+</html>

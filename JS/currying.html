@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>currying</title>
+</head>
+<body>
+</body>
+<script>
+  function sum(a, b, c, d) {
+    return a + b + c + d
+  }
+  function currying(func, ...args1) {
+    return (...args2) => {
+      let newList = args1.concat(args2)
+      if (newList.length === func.length) {
+        return func(...newList);
+      }
+      return currying(func, ...newList);
+    }
+  }
+
+  /**
+   * 缺点： 限制了参数的长度，不能无限调用，sum 的形参
+   */
+  console.log(currying(sum)(1)(2)(3)(4));
+  console.log(currying(sum, 1)(2)(3)(4));
+  console.log(currying(sum, 1, 2)(3, 4));
+
+  /**
+   * 可以实现无限调用，但需要触发返回函数的隐式转换（toString）
+   */
+  function add(...args) {
+    let newList = args
+    function sum(...args2) {
+      newList = [...newList, ...args2];
+      return sum
+    }
+    // 给 sum 添加 toString 方法，不在使用原型上的 toString
+    sum.toString = () => {
+      return newList.reduce((pre, cur) => pre + cur, 0)
+    }
+    return sum;
+  }
+  console.log(+add(1)(2)(1)(3))
+</script>
+
+</html>

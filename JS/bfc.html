@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    body {
+      padding: 0;
+      margin: 0;
+    }
+    /* BFC
+          一个块级格式化上下文（block formatting context） 是Web页面的可视化CSS渲染出的一部分。它是块级盒布局出现的区域，也是浮动层元素进行交互的区域。
+    
+    */
+    .box {
+      position: relative;
+      border: 10px solid red;
+      padding: 10px;
+      /* 1. 给父盒子设置 float 可以触发 bfc */
+      /* float: left; */
+
+      /* 2. 给父盒子设置 overflow 属性 值为 hidden 和 auto 即可 */
+      /* overflow: hidden; */
+
+      /* 3. 给父盒子设置 display: inline-block; */
+      /* display: inline-block; */
+
+      /* 4. 给父盒子设置 position: fixed; 或者 absolute */
+      /* position: absolute; */
+
+      /* 5. 给父盒子设置 display: table-cell; 或者 caption */
+      /* table-cell 此元素会作为一个表格单元格显示（类似 <td> 和 <th>） */
+      /* display: table-cell; */
+
+      /* 6. 给父盒子设置 display: flow-root （t推荐） */
+      /* flow-root 生成一个块级元素盒，其会建立一个新的块级格式化上下文，定义格式化上下文的根元素。 */
+      display: flow-root;
+      
+    }
+
+    .left {
+      width: 200px;
+      height: 200px;
+      float: left;
+      background: orange;
+    }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <div class="left">Left</div>
+  </div>
+</body>
+</html>

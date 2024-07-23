@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+</body>
+
+<script>
+  const flotArr = [{
+    id: 2,
+    name: '部门B',
+    parentId: 0
+  },
+  {
+    id: 3,
+    name: '部门C',
+    parentId: 1
+  },
+  {
+    id: 1,
+    name: '部门A',
+    parentId: 2
+  },
+  {
+    id: 4,
+    name: '部门D',
+    parentId: 1
+  },
+  {
+    id: 5,
+    name: '部门E',
+    parentId: 2
+  },
+  {
+    id: 6,
+    name: '部门F',
+    parentId: 3
+  },
+  {
+    id: 7,
+    name: '部门G',
+    parentId: 2
+  },
+  {
+    id: 8,
+    name: '部门H',
+    parentId: 4
+  },
+  {
+    id: 9,
+    name: '部门I',
+    parentId: 8
+  },
+  {
+    id: 10,
+    name: '部门J',
+    parentId: 9
+  }]
+  console.log(flotArr, 'flotArr');
+  function flotArrFun(list) {
+    list = JSON.parse(JSON.stringify(list));
+    let parent = list.filter(item => item.parentId === 0),
+      children = list.filter(item => item.parentId !== 0);
+    let count = 0;
+    format(parent, children);
+    function format(parent, children) {
+      parent.forEach(par => {
+        par.children = [];
+        let _children = children.filter(child => {
+          count++;
+          if (child.parentId === par.id) {
+            par.children.push(child);
+            return false;
+          }
+          return true;
+        })
+        format(par.children, _children);
+      })
+    }
+    console.log(count, 'count');
+    return parent;
+  }
+  // 可行 复杂度为 ON
+  function flotArrFun2(list) {
+    list = JSON.parse(JSON.stringify(list));
+    let newList = [];
+    list.forEach(item => {
+      let findIndex = list.findIndex(find => find.id === item.parentId);
+      if (findIndex >= 0) {
+        if (!list[findIndex].children) {
+          list[findIndex].children = [];
+        }
+        list[findIndex].children.push(item);
+      } else {
+        newList.push(item);
+      }
+    });
+    return newList
+  }
+  let newFlotArr = flotArrFun2(flotArr);
+  /**
+   * 递归
+   */
+  function treeTranformList(tree) {
+    tree = JSON.parse(JSON.stringify(tree));
+    let newList = [];
+    tree.forEach(item => {
+      if (item.children && item.children.length > 0) {
+        newList.push(...treeTranformList(item.children));
+      }
+      delete item.children
+      newList.push({...item})
+    });
+    return newList;
+  }
+
+  console.log(treeTranformList(newFlotArr), 'treeTranformList');
+</script>
+
+</html>

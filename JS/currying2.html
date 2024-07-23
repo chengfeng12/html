@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>currying</title>
+</head>
+
+<body>
+</body>
+<script>
+  /**
+ * 柯里化函数: 延迟接收参数, 延迟执行, 返回一个函数继续接收剩余的参数
+ * call: 收集参数
+ * apply: 注入参数, 参数变成了数组, 借用apply能依次注入参数
+ */
+  function curry(fn) {
+    // 获取原函数的参数长度
+    var argsLength = fn.length;
+
+    return function curried() {
+      // 获取调用 curried 函数的参数
+      var args1 = Array.prototype.slice.call(arguments);
+      // 判断收集的参数是否满足原函数的参数长度: 满足-调用原函数返回结果  不满足-继续柯里化(递归)
+      if (args1.length >= argsLength) {
+        // 调用原函数返回结果
+        return fn.apply(this, args1);
+      } else {
+        // 不满足继续返回一个函数收集参数
+        return function () {
+          var args2 = Array.prototype.slice.call(arguments);
+          // 继续柯里化
+          return curried.apply(this, args1.concat(args2));
+        }
+      }
+    }
+  }
+
+  function add(a, b, c) {
+    return a + b + c;
+  }
+  var newAdd = curry(add);
+  console.log(newAdd(1, 2, 3)); // 6
+  console.log(newAdd(1, 2)(3)); // 6
+  console.log(newAdd(1)(2, 3)); // 6
+  console.log(newAdd(1)(2)(3)); // 6
+  console.log(newAdd(4, 5, 6, 7)); // 15
+
+
+</script>
+
+</html>

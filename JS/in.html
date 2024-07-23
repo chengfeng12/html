@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+    }
+
+    .header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background-color: #333;
+      color: white;
+      text-align: center;
+      height: 80px;
+      /* 导航栏默认高度 */
+      line-height: 80px;
+      /* 垂直居中 */
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .content {
+      height: 2000px;
+      /* 下一个区域的默认高度 */
+    }
+  </style>
+</head>
+
+<body>
+  <div class="header">Header</div>
+  <div class="content">Content</div>
+
+</body>
+<script>
+  const next = document.querySelector(".content");
+  const header = document.querySelector(".header");
+
+  const nextOffset = next.offsetTop;
+  window.addEventListener("scroll", function () {
+    stickyHeader();
+  });
+
+  function stickyHeader() {
+    const scrollTop = window.pageYOffset;
+
+    if (scrollTop >= nextOffset - header.clientHeight) {
+      // 滚动到下一个区域，元素高度自动缩小
+      const newHeight = header.clientHeight / 2;
+      const maxHeight = nextOffset - scrollTop;
+      header.style.maxHeight = `${maxHeight}px`;
+      header.style.height = `${newHeight}px`;
+    } else {
+      // 固定在页面顶部
+      header.style.maxHeight = "none";
+      header.style.height = "80px";
+    }
+  }
+
+</script>
+
+</html>

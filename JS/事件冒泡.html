@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .box {
+      /* position: relative; */
+      width: 500px;
+      height: 500px;
+      background-color: orange;
+    }
+
+    .box>div {
+      /* position: absolute; */
+      top: 0;
+      left: 0;
+      text-align: right;
+    }
+
+    .A {
+      height: 200px;
+      width: 200px;
+      background-color: red;
+    }
+
+    .B {
+      height: 150px;
+      width: 150px;
+      background-color: blue;
+    }
+
+    .C {
+      height: 100px;
+      width: 100px;
+      background-color: green;
+    }
+    .span {
+      width: 50px;
+      height: 50px;
+      display: inline-block;
+      margin: 10px;
+      background-color: royalblue;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="box">
+    <div class="A">A
+      <div class="B">B
+        <div class="C">C</div>
+      </div>
+    </div>
+    <span class="span">span1</span>
+    <span class="span">span2</span>
+    <span class="span">span3</span>
+    <span class="span">span4</span>
+    <span class="span">span5</span>
+    <span class="span">span6</span>
+  </div>
+</body>
+
+<script>
+  let A = document.querySelector('.A');
+  let B = document.querySelector('.B');
+  let C = document.querySelector('.C');
+  let BOX = document.querySelector('.box');
+  // true表示该元素在事件的“捕获阶段”（由外往内传递时）响应事件；
+  // false表示该元素在事件的“冒泡阶段”（由内向外传递时）响应事件。
+  // 默认值为 false
+  A.addEventListener('click', () => {
+    console.log('A 捕获阶段');
+  }, true)
+  A.addEventListener('click', (e) => {
+    // e.stopPropagation();
+    console.log('A 冒泡阶段');
+  }, false)
+
+  B.addEventListener('click', () => {
+    console.log('B 捕获阶段');
+  }, true)
+  B.addEventListener('click', () => {
+    console.log('B 冒泡阶段');
+  }, false)
+
+  C.addEventListener('click', () => {
+    console.log('C 捕获阶段');
+  }, true)
+  C.addEventListener('click', () => {
+    console.log('C 冒泡阶段');
+  }, false)
+
+  BOX.addEventListener('click', () => {
+    console.log('BOX 捕获阶段');
+  }, true)
+  BOX.addEventListener('click', (e) => {
+    console.log(e.target.textContent);
+    alert(e.target.textContent);
+    console.log('BOX 冒泡阶段');
+  }, false)
+</script>
+
+</html>

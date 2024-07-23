@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .box {
+      margin: 200px auto;
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      border: 5px solid #ccc;
+      overflow: hidden;
+      position: relative;
+      cursor: pointer;
+    }
+    .box:hover .bg {
+      clip-path: circle(50% at 50% 50%);
+    }
+    img,
+    .bg,
+    .mask {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 200px;
+      height: 200px;
+    }
+    .bg {
+      background: url('../image//avatar.png');
+      background-size: 200px 200px;
+      clip-path: circle(0% at 50% 50%);
+      transition: all .3s;
+    }
+    .mask {
+      background-color: rgba(0, 0, 0, .3);
+    }
+  </style>
+</head>
+<body>
+  <div id="#app">
+    <div class="box">
+      <img src="../image/avatar.png" alt="">
+      <div class="mask"></div>
+      <div class="bg"></div>
+    </div>
+  </div>
+</body>
+</html>

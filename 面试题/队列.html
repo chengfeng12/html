@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    class Task {
+      constructor() {
+        this.taskList = [];
+        this.maxCount = 2;
+        this.curCount = 0;
+      }
+      add(task, value) {
+        return new Promise((resolve, reject) => {
+          this.taskList.push({
+            task,
+            resolve,
+            reject,
+            value
+          })
+          this.run()
+        })
+      }
+      run() {
+        while (this.curCount < this.maxCount && this.taskList.length > 0) {
+          const { task, resolve, value } = this.taskList.shift()
+          this.curCount += 1;
+          task().then(res => {
+            resolve(value)
+          }).finally(() => {
+            this.curCount -= 1;
+            this.run()
+          })
+        }
+      }
+    }
+    const task = new Task()
+    const setTimeoutEvent = (time) => {
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          resolve()
+        }, time);
+      })
+    }
+    function addTask(time, value) {
+      task.add(() => setTimeoutEvent(time), value).then(res => {
+        console.log(res, 'resss');
+      })
+    }
+    addTask(10000, 1) // 10s 后输出 任务1完成
+    addTask(5000, 2) // 5s 后输出 任务2完成
+    addTask(3000, 3) // 8s 后输出 任务3完成
+    addTask(4000, 4)  // 12s 后输出 任务4完成
+    addTask(5000, 5)  // 15s 后输出 任务5完成
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        div {
+            background-color: red;
+        }
+
+        p {
+            display: none;
+        }
+
+        section {
+            visibility: hidden;
+            height: 40px;
+        }
+
+        .ul-box {
+            display: flex;
+            justify-content: flex-start;
+            padding: 0;
+            margin: 20px;
+        }
+
+        .ul-box li {
+            width: 200px;
+            height: 200px;
+            list-style: none;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <button class="btn">点击测试</button>
+        <button class="btn1">取消</button>
+        <div>
+            div1111
+            <p>opppppp</p>
+        </div>
+        <section class="section">ahiawefhiawe</section>
+        <p class="p2"> 1111</p>
+
+
+    </div>
+    <ul class="ul-box">
+        <li>red</li>
+        <li>green</li>
+        <li>ywllow</li>
+    </ul>
+    <script deffer>
+        var obj1 = {
+            a: 'aaa',
+            b: 'bbb',
+            c: {
+                d: 'ddd',
+                e: 'eee',
+                f: [
+                    {
+                        g: 'ggg'
+                    }
+                ],
+            }
+        }
+        
+        function deepCopy(data) {
+            let type = typeof data;
+            if (type === 'object') {
+                let newData = data instanceof Array ? [] : {};
+                if (data instanceof Array) {
+                    data.forEach(item => {
+                        newData.push(deepCopy(item));
+                    })
+                } else if (data !== null) {
+                    for (const key in data) {
+                        newData[key] = deepCopy(data[key])
+                    }
+                }
+                return newData
+            }
+            return data
+        }
+        function deepCopyTwo(params) {
+            return new Promise(reslove => {
+                const {port1 ,port2} = new MessageChannel();
+                port1.postMessage(params);
+                port2.onmessage = (msg) => {
+                    resolve(msg);
+                }
+            })
+        }
+        let obj2 = deepCopy(obj1);
+        /* let obj2;
+        await deepCopyTwo(obj1).then(res => {
+            obj2 = res;
+        }); */
+        // let obj2 = Object.assign({}, obj1);
+        obj2.c.d = '修改后的d';
+        console.log(obj2, 'obj2');
+        console.log(obj1, 'obj1');
+        let count = 0;
+        function swap(arr, preIndex, curindex) {
+            const tempNum = arr[preIndex];
+            arr[preIndex] = arr[curindex];
+            arr[curindex] = tempNum;
+        }
+        /**
+         * 冒泡排序
+         * @params {arr} 排序的数组
+        */
+        function po(arr) {
+            let length = arr.length;
+            for (let i = 0; i < length; i++) {
+                // 减 i 的原因是因为最大的数已经交换到了最右边
+                for (let j = 0; j < length - i - 1; j++) {
+                    count++;
+                    if (arr[j] > arr[j + 1]) {
+                        swap(arr, j, j + 1);
+                    }
+                }
+            }
+            return arr;
+        }
+
+        function select(arr) {
+            let length = arr.length;
+            let minIndex = 0;
+            for (let i = 0; i < length - 1; i++) {
+                minIndex = i;
+                for (let j = i + 1; j < length; j++) {
+                    count++;
+                    if (arr[minIndex] > arr[j]) {
+                        minIndex = j;
+                    }
+                }
+                if (minIndex !== i) {
+                    swap(arr, minIndex, i);
+                }
+            }
+            return arr;
+        }
+
+        function quick(arr) {
+            quickItem(0, arr.length - 1, arr);
+            return arr;
+        }
+        function quickItem(left, right, arr) {
+            if (left < right) {
+                let index = quickSwap(left, right, arr);
+                if (left < index - 1) {
+                    quickItem(left, index - 1, arr);
+                }
+                if (index < right) {
+                    quickItem(index, right, arr);
+                }
+            }
+        }
+        function quickSwap(left, right, arr) {
+            let pit = arr[left],
+                l = left,
+                r = right;
+            while (l < r) {
+                while (arr[l] < pit) {
+                    l++;
+                }
+                while (arr[r] > pit) {
+                    r--;
+                }
+                if (l <= r) {
+                    swap(arr, l, r);
+                    l += 1;
+                    r -= 1;
+                }
+            }
+            return l;
+        }
+        // 防抖函数
+        function debounce(fun, delay = 1000) {
+            let timer;
+            function debounced(...args) {
+                if (timer) {
+                    clearTimeout(timer);
+                }
+                let context = this;
+                timer = setTimeout(function () {
+                    fun.apply(context, args);
+                }, delay)
+            }
+            debounced.cancel = function () {
+                if (timer) {
+                    clearTimeout(timer);
+                }
+            }
+            return debounced;
+        }
+
+
+        function throttle(fun, delay = 1000) {
+            let timer;
+            return function (...args) {
+                if (timer) {
+                    return;
+                }
+                let context = this;
+                timer = setTimeout(() => {
+                    fun.apply(context, args);
+                    timer = null;
+                }, delay);
+            }
+        }
+        let numList = [2, 6, 5, 48, 5, 47, 6, 4, 3, 2, 2, 6, 5, 48, 5, 47, 6, 4, 3, 2];
+        console.log(quick(numList));;
+        console.log(count, 'count');
+
+
+        const btn = document.querySelector('.btn');
+
+        let debounced = debounce(btnEvent, 3000);
+        console.log(debounced, debounced.cancel);
+        btn.addEventListener("click", debounced);
+        document.querySelector('.btn1').addEventListener("click", debounced.cancel);
+
+        function btnEvent(params) {
+            console.log(this, params);
+        }
+
+
+        // 字符串颠倒
+        let str = 'waht?';
+        function reversStr(str) {
+            let newStr = '';
+            // str.split('').forEach(text => {
+            //     newStr = text + newStr;
+            // })
+            let arr = str.split('');
+            for (let i = arr.length - 1; i >= 0; i--) {
+                newStr = newStr + arr[i];
+            }
+            return newStr;
+        }
+        console.log(reversStr(str));
+
+        function sleep(time, data) {
+            // setTimeout(() => {
+            //     console.log(data);
+            // }, time);
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    resolve();
+                }, time);
+            })
+        }
+        for (let i = 0; i < 5; i++) {
+            sleep(i * 1000).then(() => {
+                console.log(i);
+            })
+        }
+
+        let text = '{}[]()';
+        let text1 = '({}[])';
+        let text2 = '{{}])}}';
+        let text3 = '(){}()()';
+        let text4 = ')({}()()';
+
+        let arr = [text, text1, text2, text3, text4];
+        function checkLegalStr(text) {
+            let map = {
+                '{': 1,
+                '}': -1,
+                '(': 1,
+                ')': -1,
+                '[': 1,
+                ']': -1,
+            }
+
+            let num = 0;
+            for (let i = 0; i < text.length; i++) {
+                num += map[text[i]]
+                if (num <= -1) {
+                    return false
+                }
+            }
+            if (num === 0) return true
+            // let list = [];
+            // for (let i = 0; i < text.length; i++) {
+            //     let curText = text[i];
+            //     if (map[curText] > 0) {
+            //         list.push(curText);
+            //     } else {
+            //         let delStr = list.pop();
+            //         if (map[delStr] + map[curText] !== 0) {
+            //             return false;
+            //         }
+            //     }
+            // }
+            // if (list.length === 0) {
+            //     return true;
+            // }
+            // return false;
+        }
+        arr.forEach(text => {
+            console.log(checkLegalStr(text));
+        })
+
+        // 判断是否是回文
+        function huiwen(num) {
+            // if (num < 0) {
+            //     return false;
+            // }
+            let strNum = num.toString();
+            let left = 0,
+                right = strNum.length - 1;
+            while (left <= right) {
+                if (strNum[left] === strNum[right]) {
+                    left++;
+                    right--;
+                } else {
+                    return false
+                }
+            }
+            return true
+        }
+        console.log(huiwen('amanaplanacanalpanama'), 'hhhh');
+        /**
+         * @param {string} s
+         * @return {boolean}
+         */
+        var isPalindrome = function (s) {
+            // if (s.length <= 1) {
+            //     return false
+            // }
+            if (s === " ") {
+                return true
+            }
+            s = s.replace(/\W|\_/g, '').trim().toLocaleLowerCase();
+            console.log(s, 's');
+
+            let left = 0,
+                right = s.length - 1;
+            while (left <= right) {
+                if (s[left] === s[right]) {
+                    left++;
+                    right--;
+                } else {
+                    return false
+                }
+            }
+            return true
+
+
+            // let text = '',
+            //     left = 0,
+            //     tempArr = [];
+            //     right = s.length - 1;
+            // while (left < right) {
+            //     if (s[left] === s[right]) {
+            //         left++;
+            //         right--;
+            //         tempArr.push(left);
+            //         tempArr.shift(right);
+            //     }
+            //     if (s[left] !== s[right]) {
+            //         right--;
+            //         tempArr = [];
+            //     }
+            //     if (s[left] !== s[right]) {
+            //         left++;
+            //         tempArr = [];
+            //     }
+            // }
+            // console.log(tempArr, 'tempArr');
+            // if (tempArr.length) {
+            //     return true;
+            // }
+            // return false;
+        };
+        console.log(isPalindrome("ab_a"), 'eee');
+
+        /**
+         * 两数之和
+         * @param {number[]} nums
+         * @param {number} target
+         * @return {number[]}
+         */
+        var twoSum = function (nums, target) {
+            let len = nums.length;
+            for (let i = 0; i < len - 1; i++) {
+                for (let j = i + 1; j < len; j++) {
+                    if (nums[i] + nums[j] === target) {
+                        return [i, j];
+                    }
+                }
+            }
+            return false
+        };
+        console.log(twoSum([2, 7, 11, 15], 9));
+
+        /**
+         * 三数之和
+         * @param {number[]} nums
+         * @return {number[][]}
+         */
+        var threeSum = function (nums) {
+            let len = nums.length,
+                arr = [];
+            nums = nums.sort((num1, num2) => num1 - num2);
+            let i = 0;
+            while (i <= len - 2) {
+                let sum = nums[i] + nums[i + 1] + nums[i + 2]
+                if (sum === 0) {
+                    arr.push([nums[i], nums[i + 1], nums[i + 2]]);
+                    if (nums[i] === nums[i + 1]) {
+                        i++;
+                    }
+                }
+                i++;
+
+            }
+        };
+        console.log(threeSum([-1, 0, 1, 2, -1, -4]));
+
+        function myNew(func, ...args) {
+            let obj = {};
+            obj.__proto__ = Object.prototype;
+            const result = func.apply(obj, args);
+            return result instanceof Object ? result : obj;
+        }
+        function NewFun(age, name) {
+            this.name = name;
+            this.age = age;
+            console.log(this, 'this');
+            return 123
+        }
+
+        let res = myNew(NewFun, 18, 'zhangsan')
+        console.log(res, 'res');
+
+        let ulList = document.querySelector('.ul-box');
+        ulList.addEventListener('click', (e) => {
+            console.log(e.target);
+        })
+
+
+        const dom = new Proxy({}, {
+            get(target, property) {
+                return function (attrs = {}, ...children) {
+                    const el = document.createElement(property);
+                    for (let prop of Object.keys(attrs)) {
+                        el.setAttribute(prop, attrs[prop]);
+                    }
+                    for (let child of children) {
+                        if (typeof child === 'string') {
+                            child = document.createTextNode(child);
+                        }
+                        el.appendChild(child);
+                    }
+                    return el;
+                }
+            }
+        });
+
+        const el = dom.div({},
+            'Hello, my name is ',
+            dom.a({ href: '//example.com' }, 'Mark'),
+            '. I like:',
+            dom.ul({},
+                dom.li({}, 'The web'),
+                dom.li({}, 'Food'),
+                dom.li({}, '…actually that\'s it'),
+                dom.span({
+                    class: 'test'
+                }, dom.a({}, 'aaa'))
+            )
+        );
+
+        document.body.appendChild(el);
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>promise</title>
+</head>
+
+<body>
+  <script>
+    /**
+     * 微任务
+     */
+    function runMicroTask(callback) {
+      // if (process && process.nextTick) {
+      //   process.nextTick(callback);
+      // } else 
+      if (MutationObserver) {
+        let p = document.createElement('p')
+        // 每次都会创建一个实例， 可以优化
+        let observer = new MutationObserver(callback);
+        observer.observe(p, {
+          childList: true
+        });
+        p.innerHTML = 'p';
+      } else {
+        setTimeout(callback, 0)
+      }
+    }
+
+    const PENDDING = 'pendding';
+    const FULFILLED = 'fulfilled';
+    const REJECTED = 'rejected';
+    class MyPromise {
+      constructor(executer) {
+        this.state = PENDDING;
+        this.value = undefined;
+        this.handler = [];
+        try {
+          executer(this._resolve.bind(this), this._reject.bind(this));
+        } catch (error) {
+          this._reject(error);
+        }
+      }
+      _pushHandle(executer, state, reslove, reject) {
+        this.handler.push({
+          executer,
+          state,
+          reslove,
+          reject
+        })
+      }
+      _changeState(state, value) {
+        if (this.state !== PENDDING) {
+          return;
+        }
+        this.state = state;
+        this.value = value;
+        this._runHandlers();
+      }
+      _runHandlers() {
+        // 目前任务仍在挂起
+        if (this.state === PENDDING) {
+          return;
+        }
+        while (this.handler[0]) {
+          console.log(this.handler[0], 'this.handler[0]');
+          const handle = this.handler[0];
+          this._runOneHandle(handle);
+          this.handler.shift();
+        }
+      }
+      _runOneHandle({ executer, state, reslove, reject }) {
+        runMicroTask(() => {
+          console.log(this.state);
+          console.log({ executer, state, reslove, reject });
+          console.log('-------');
+          // 状态不一致直接返回
+          if (this.state !== state) {
+            return;
+          }
+          // 穿透， 如果第一个 then 函数没有定义失败的函数，则返回后的 promise 的状态与前一个 promise 保持一致
+          if (typeof executer !== 'function') {
+            this.state === FULFILLED ? reslove(this.value) : reject(this.value);
+          }
+        })
+        // if () {}
+      }
+      _resolve(value) {
+        this._changeState(FULFILLED, value);
+      }
+      _reject(reason) {
+        this._changeState(REJECTED, reason);
+      }
+
+      then(onFufilled, onRejected) {
+        return new MyPromise((resolve, reject) => {
+          this._pushHandle(onFufilled, FULFILLED, resolve, reject);
+          this._pushHandle(onRejected, REJECTED, resolve, reject);
+          this._runHandlers();
+        })
+      }
+    }
+
+    // const p1 = new MyPromise((reslove, reject) => {
+    //   setTimeout(() => {
+    //     reject(1)
+    //   }, 1000);
+    // });
+    // const p2 = p1.then(function pp(params) { })
+    // setTimeout(() => {
+    //   console.log(p1);
+    //   console.log(p2);
+    // }, 2000);
+  </script>
+</body>
+
+</html>

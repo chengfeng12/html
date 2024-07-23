@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+
+</body>
+<script>
+  let arr = [1, 2, 3, 4, 5, 1, 2, 3, 2, 3, 2, 3, "1", "2", "2"];
+
+  let formatNum = (arr) => {
+    /**
+     * 方法一 new Set
+     *  1. Array.from(new Set(arr))
+     *  2. [...new Set(arr)]
+     */
+    /* return [...new Set(arr)]; */
+
+    /**
+     * 方法二 indexof
+     */
+
+    /* let newArr = [];
+        for (let i = 0; i < arr.length; i++) {
+          if (newArr.indexOf(arr[i]) === -1) {
+            newArr.push(arr[i]);
+          }      
+        }
+        return newArr;
+    */
+
+    /**
+     * 方法三 includes
+     */
+    /* let newArr = [];
+        for (let i = 0; i < arr.length; i++) {
+          if (!newArr.includes(arr[i])) {
+            newArr.push(arr[i]);
+          }
+        }
+        return newArr; */
+
+    /**
+     * 方法四 通过指针删除方式
+     */
+    /* for (let i = 0; i < arr.length; i++) {
+      for (let j = i + 1; j < arr.length; j++) {
+        if (arr[i] === arr[j]) {
+          arr.splice(j, 1);
+          j--;
+        }
+      }
+    }
+    return arr; */
+
+    /**
+     * 方法五 filter + indexOf
+     */
+    /* return arr.filter((item, i) => {
+      return arr.indexOf(item) === i;
+    }) */
+
+    /**
+     * 方法六 reduce + includes
+     */
+    /* let newArr = arr.reduce((pre, cur) => {
+      return pre.includes(cur) ? pre : [...pre, cur]
+    }, [])
+    return newArr; */
+
+    /**
+     * 方法7 map 的方式
+     */
+    /* let map = new Map(),
+        newArr = [];
+    for (let i = 0; i < arr.length; i++) {
+     if (!map.has(arr[i])) {
+      map.set(arr[i], arr[i])
+      newArr.push(arr[i]);
+     }
+    }
+    return newArr; */
+
+    /**
+     * 方法8 Object 的方式 
+     *    ---》问题 1 和 '1' 访问的都是字符串的 1
+     */
+    let obj = {},
+      newArr = [];
+    for (let i = 0; i < arr.length; i++) {
+      if (!obj.hasOwnProperty(arr[i])) {
+        obj[arr[i]] = arr[i];
+        newArr.push(arr[i]);
+      }
+    }
+    return newArr;
+  }
+  console.log(formatNum(arr));
+
+  /**
+ * @param {string} s
+ * @return {number}
+ */
+  var lengthOfLongestSubstring = function (s) {
+    if (s.length <= 1) {
+      return s.length
+    }
+    let len = s.length,
+      max = 0,
+      left = 0;
+    let map = new Map();
+    for (let i = 0; i < len; i++) {
+      if (map.has(s[i]) && map.get(s[i]) >= left) {
+        // map.get(s[i]) + 1
+        console.log(map.get(s[i]) + 1, map);
+        left = map.get(s[i]) + 1;
+      }
+      max = Math.max(max, i - left + 1);
+      map.set(s[i], i);
+    }
+    // max = s.length - left;
+    console.log(map, left);
+    return max;
+  };
+  let str = "dvdf";
+  console.log(lengthOfLongestSubstring(str));
+</script>
+
+</html>

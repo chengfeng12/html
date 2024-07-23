@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>奇数和</title>
+</head>
+<body>
+  <script>
+    // 求从 1 开的前 N 个奇数和
+    function sum(n) {
+      let total = 0;
+      for (let i = 0; i < n; i++) {
+        total += 2 * i + 1
+      }
+      // 根据数学规律可写 n * n
+      return total
+    }
+
+    console.log(sum(1));
+    console.log(sum(2));
+    console.log(sum(3));
+    console.log(sum(4));
+    console.log(sum(5));
+  </script>
+</body>
+</html>

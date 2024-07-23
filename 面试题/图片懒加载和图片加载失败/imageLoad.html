@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>imageLoad</title>
+</head>
+
+<body>
+  <!-- <img class="image" src="https://img1.baidu.com/it/u=443362365,3385415513&fm=253&fmt=auto&app=138&f=JPEG?w=889&h=500"> -->
+  <img class="image" src="https://234.png">
+</body>
+<script>
+  const imageDom = document.querySelector('.image');
+  function load(image) {
+    let src = image.src || "";
+    image.onload = (res) => {
+      // image.src = src
+    }
+    image.onerror = (err) => {
+      image.src = './xylogo-r.png'
+    }
+  }
+  let count = 0
+  function createImg(url = "") {
+    let img = document.createElement('img');
+    img.src = url
+    // console.log(img);
+    return new Promise((resolve, reject) => {
+      img.onload = () => {
+        count += 1
+        console.log(count, 'count');
+        resolve(img)
+      }
+      img.onerror = () => {
+        img.src = './xylogo-r.png';
+        console.log('加载失败');
+        reject(img);
+      }
+    })
+  }
+  async function test(params) {
+    let frg = document.createDocumentFragment();
+    for (let i = 0; i < 5; i++) {
+      await createImg('http://123.png').then(res => {
+      // await createImg('http://img1.baidu.com/it/u=443362365,3385415513&fm=253&fmt=auto&app=138&f=JPEG?w=889&h=500').then(res => {
+        frg.appendChild(res);
+      }, err => {
+        frg.appendChild(err);
+      })
+    }
+    document.body.appendChild(frg);
+  }
+  test();
+
+
+  load(imageDom)
+</script>
+
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .typing {
+      height: 80vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .typing-effect {
+      width: 22ch;
+      white-space: nowrap;
+      overflow: hidden;
+      border-right: 3px solid;
+      font-family: monospace;
+      font-size: 2em;
+      animation: typing 2s steps(22), effect .5s step-end infinite alternate;
+    }
+
+    @keyframes typing {
+      from {
+        width: 0;
+      }
+    }
+
+    @keyframes effect {
+      50% {
+        border-color: transparent;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="typing">
+    <div class="typing-effect">Typing effect for text</div>
+  </div>
+  <script>
+    let arr = [];
+    for (let i = 0; i < 10000000; i++) {
+      arr.push(i)
+    };
+
+    console.time();
+    let result = arr.find(item => item === 9999999);
+    console.timeEnd();
+
+
+    console.time('1');
+    let result2 = arr.includes(9999999);
+    console.timeEnd('1');
+
+
+    function fun() {
+      var num = 1;
+      function num2() {
+        num++;
+        console.log(num, "2");
+      }
+      function num3() {
+        console.log(num);
+      }
+      return {
+        num2,
+        num3
+      }
+    }
+    const add2 = fun().num2;
+    const result3 = fun().num3;
+    add2();
+    add2();
+    add2();
+    add2();
+    add2();
+    add2();
+    result3();
+  </script>
+</body>
+
+</html>

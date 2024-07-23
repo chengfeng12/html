@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="app">
+        {{ msg }}
+        <h1>{{ title }}</h1>
+        {{ msg }}
+        <p>{{ title }}</p>
+        <button class="btn" @click="update">修改</button>
+    </div>
+    <script src="./vue的源码.js"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                msg: '你好',
+                title: '这是一个标题'
+            },
+            mounted() {
+                console.log(this);
+                // const btn = document.querySelector('.btn');
+                // btn.addEventListener('click', () => {
+                //     this.msg = '修改了';
+                //     console.log(this);
+                // })
+                // btn.getAttribute
+            },
+            methods: {
+                update(e) {
+                    this.msg = '饿吃啥哦';
+                    this.title = '改变了标题';
+                }
+            },
+        })
+    </script>
+</body>
+
+</html>
